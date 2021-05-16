@@ -1,0 +1,152 @@
+﻿@model FXV.ViewModels.NewModels.ViewModel_Test
+@{ Layout = "_Layout"; }
+
+@Html.Partial("_Loading")
+<div class="content p-0 mt-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="p-0">
+                    <h2 class="medium-bold text-left text-FXV">Edit Test</h2>
+                </div>
+                <form id="CreateTests" class="card-body col-12 row" asp-action="CreateTests" asp-controller="Home" method="post" enctype="multipart/form-data">
+                    <div class="col-12 col-lg-7 row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="TestId" hidden />
+                        <input asp-for="RowVersion" hidden readonly value="@Model.RowVersionBase64" />
+                        <div class="form-group col-12">
+                            <label asp-for="Name" class="control-label text-white"></label>
+                            <input asp-for="Name" class="form-control" placeholder="Test Name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-12">
+                            <label asp-for="CategoryId" class="control-label text-white pr-2"></label>
+                            <select class="pl-2 form-control" asp-for="CategoryId" asp-items="ViewBag.CategoryList">
+                                <option>Select Category</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-12">
+                            <label asp-for="Unit" class="control-label text-white"></label>
+                            <select asp-for="Unit" class="form-control">
+                                <option>CM</option>
+                                <option>M</option>
+                                <option>KM</option>
+                                <option>GM</option>
+                                <option>KG</option>
+                                <option>Sec</option>
+                                <option>Min</option>
+                                <option>Hours</option>
+                                <option>Val</option>
+                            </select>
+                        </div>
+                        <div class="col-6 pl-0 pr-0">
+                            <div class="form-group col-12">
+                                <label asp-for="LowerResult" class="control-label text-white"></label>
+                                <input asp-for="LowerResult" type="number" class="form-control" placeholder="Lowerest Result" />
+                                <span asp-validation-for="LowerResult" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="LowerScore" class="control-label text-white"></label>
+                                <input asp-for="LowerScore" type="number" class="form-control" placeholder="Lowerest Score" />
+                                <span asp-validation-for="LowerScore" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-6 pl-0 pr-0">
+                            <div class="form-group col-12">
+                                <label asp-for="HigherResult" class="control-label text-white"></label>
+                                <input asp-for="HigherResult" type="number" class="form-control" placeholder="Highest Result" />
+                                <span asp-validation-for="HigherResult" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-12">
+                                <label asp-for="HigherScore" class="control-label text-white"></label>
+                                <input asp-for="HigherScore" type="number" class="form-control" placeholder="Highest Score" />
+                                <span asp-validation-for="HigherScore" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group col-12">
+                            <label asp-for="Description" class="control-label text-white"></label>
+                            <textarea asp-for="Description" class="form-control" placeholder="Description" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 offset-0 col-lg-4 row">
+                        <div class="form-group col-12" id="SetGender">
+                            <label asp-for="Gender" class="control-label text-white"></label>
+                            <input asp-for="Gender" v-model="gender" hidden />
+                            <div>
+                                <div :class="{'btn p-2 pl-3 pr-3':true, 'option-male-btn-active': isMale, 'option-male-btn': !isMale}" v-on:click="Setter('Male')">
+                                    <h4 class="m-0 font-weight-bold"><strong>M</strong></h4>
+                                </div>
+                                <div :class="{'btn p-2 pl-3 pr-3':true,  'option-female-btn-active': !isMale, 'option-female-btn': isMale}" v-on:click="Setter('Female')">
+                                    <h4 class="m-0 font-weight-bold"><strong>F</strong></h4>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-12" id="SetVisibility">
+                            <label asp-for="Public" class="control-label text-white"></label>
+                            <input asp-for="Public" v-model="isPublic" hidden />
+                            <div>
+                                <div :class="{'btn p-2 text-capitalize':true, 'option-btn-active': isPublic, 'option-btn': !isPublic}" v-on:click="Setter(true)">
+                                    Public
+                                </div>
+                                <div :class="{'btn p-2 text-capitalize':true, 'option-btn-active': !isPublic, 'option-btn': isPublic}" v-on:click="Setter(false)">
+                                    Private
+                                </div>
+                            </div>
+                            <span asp-validation-for="Public" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-12" id="SetScoreOrder">
+                            <label asp-for="Reverse" class="control-label text-white"></label>
+                            <input asp-for="Reverse" v-model="isReverseOrder" hidden />
+                            <div>
+                                <div :class="{'btn p-2 text-capitalize':true, 'option-btn-active': !isReverseOrder, 'option-btn': isReverseOrder}" v-on:click="Setter(false)">
+                                    Higher is Better
+                                </div>
+                                <div :class="{'btn p-2 text-capitalize':true, 'option-btn-active': isReverseOrder, 'option-btn': !isReverseOrder}" v-on:click="Setter(true)">
+                                    Lower is Better
+                                </div>
+                            </div>
+                            <span asp-validation-for="Reverse" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-12">
+                            <label asp-for="IsVerified" class="control-label text-white"></label>
+                            <div style="padding-top:0.7rem;">
+                                <input type="checkbox" asp-for="IsVerified" /><a class="text-white pl-2">Select To Verify Test</a>
+                            </div>
+                        </div>
+                        <div class="form-group col-12">
+                            <label asp-for="IsSplittable" class="control-label text-white">Splittable</label>
+                            <div style="padding-top:0.7rem;">
+                                <input type="checkbox" asp-for="IsSplittable" /><a class="text-white pl-2">This Test Can Be Split.</a>
+                            </div>
+                        </div>
+                        <div class="form-group col-12">
+                            <label asp-for="UsedAsSplit" class="control-label text-white">Used As Split</label>
+                            <div style="padding-top:0.7rem;">
+                                <input type="checkbox" asp-for="UsedAsSplit" /><a class="text-white pl-2">This Test Can Be Used As a Split.</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 text-center">
+                        <a class="btn btn-warning-customized" type="button" asp-action="Index" asp-controller="Tests">Cancel</a>
+                        <button class="btn btn-warning-customized" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var pageData = new Vue({
+        data() {
+            return {
+                gender: "@Model.Gender",
+                isPublic: @Model.Public.ToString().ToLower(),
+                isReverseOrder: @Model.Reverse.ToString().ToLower()
+            }
+        }
+    });
+</script>
+<script type="text/javascript" src="/sources/js/testEditPageHandler.js"></script>

@@ -1,0 +1,154 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@{
+    Layout = "_Layout";
+}
+<!--Events-->
+<style>
+    .carousel-caption {
+        bottom: 0 !important;
+    }
+
+    .carousel-item {
+        width: 60%;
+        margin-left: 20%;
+    }
+
+        .carousel-item img {
+            --width: 57vw;
+            height: calc(var(--width) * 0.6) !important;
+            width: var(--width) !important;
+        }
+
+    .slider-to-right {
+        right: -5px;
+    }
+</style>
+<div id="deleteConfirmPopUp" class="modal">
+    <!-- Modal content -->
+    <fieldset class="mt-5 col-10 offset-1">
+        <legend class="text-FXV text-center w-auto font-2rem medium-bold-400">Delete</legend>
+        <h3 class="text-FXV medium-bold-400 text-center pt-2 pb-5">Are you sure?</h3>
+        <div class="mb-4 text-center text-capitalize">
+            <button class="btn btn-outline-secondary mr-5 medium-bold-400" id="deleteConfirm">Yes</button>
+            <button class="btn btn-outline-secondary ml-5 medium-bold-400" id="deleteCancel">No,Take me back</button>
+        </div>
+    </fieldset>
+</div>
+<div class="content p-0 mt-3">
+    <div class="container-fluid pb-2 list-item-block-md-show">
+        <h2 class="medium-bold text-center font-weight-bold text-FXV mb-5">Upcoming Events</h2>
+        <div id="eventSliders" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="position-absolute">
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-time">12:00 pm</h4>
+                        <h4 class="text-center text-FXV date-triangle"></h4>
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-date">29 Sep, 2020</h4>
+                    </div>
+                    <div class="position-absolute slider-to-right mt-4">
+                        <h4 class="text-center text-FXV pt-1 pb-1"><span class="font-weight-bold">23</span> Registered</h4>
+                    </div>
+                    <img src="/sources/img/Nov_design_notes.png" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block text-right text-FXV position-absolute slider-to-right pb-0">
+                        <h3 class="font-weight-bold mb-0">Event Name</h3>
+                        <p class="mb-1">
+                            <span class="material-icons text-white">
+                                location_on
+                            </span>
+                            Location
+                        </p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="position-absolute">
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-time">12:00 pm</h4>
+                        <h4 class="text-center text-FXV date-triangle"></h4>
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-date">29 Sep, 2020</h4>
+                    </div>
+                    <div class="position-absolute slider-to-right mt-4">
+                        <h4 class="text-center text-FXV pt-1 pb-1"><span class="font-weight-bold">23</span> Registered</h4>
+                    </div>
+                    <img src="/sources/img/bg_login.jpg" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block text-right text-FXV position-absolute slider-to-right pb-0">
+                        <h3 class="font-weight-bold mb-0">Event Name</h3>
+                        <p class="mb-1">
+                            <span class="material-icons text-white">
+                                location_on
+                            </span>
+                            Location
+                        </p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="position-absolute">
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-time">12:00 pm</h4>
+                        <h4 class="text-center text-FXV date-triangle"></h4>
+                        <h4 class="text-center text-FXV pt-1 pb-1 bg-dark event-date">29 Sep, 2020</h4>
+                    </div>
+                    <div class="position-absolute slider-to-right mt-4">
+                        <h4 class="text-center text-FXV pt-1 pb-1"><span class="font-weight-bold">23</span> Registered</h4>
+                    </div>
+                    <img src="/sources/img/Logo.png" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block text-right text-FXV position-absolute slider-to-right pb-0">
+                        <h3 class="font-weight-bold mb-0">Event Name</h3>
+                        <p class="mb-1">
+                            <span class="material-icons text-white">
+                                location_on
+                            </span>
+                            Location
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#eventSliders" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#eventSliders" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+    <div class="container pb-5">
+        <h3 class="medium-bold text-left font-weight-bold text-white">All Events</h3>
+        <div id="event-menu" class="row container">
+            <div class="mt-1">
+                <input v-on:keyup="Search()" v-model="SearchText" placeholder="Search Name..." />
+            </div>
+            <span class="text-muted font-2rem ml-3 mr-3 menu-divider-vertical">|</span>
+            <div class="mt-1">
+                <label class="mr-1">Start</label>
+                <input v-model="startDate" class="mr-2" type="date" placeholder="Start Date..." />
+            </div>
+            <div class="mt-1">
+                <label class="mr-1">End</label>
+                <input v-model="endDate" type="date" placeholder="End Date..." />
+            </div>
+            <div>
+                <a class="ml-1 input-group-text pointer" v-on:click="SearchByDate()">
+                    <span class="text-white material-icons">
+                        search
+                    </span>
+                </a>
+            </div>
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Admin")).Succeeded)
+            {
+                <span class="text-muted font-2rem ml-2 mr-3 menu-divider-vertical">|</span>
+                <div>
+                    <a class="btn btn-secondary pt-1 pb-1 text-capitalize" asp-action="Create">Add</a>
+                </div>
+            }
+        </div>
+        <div class="mt-4 list" id="eventlist">
+            <div is="event-element" v-for='list in lists' v-bind:key='list.id' v-bind:eventname="list.eventname" v-bind:location="list.location"
+                 v-bind:img_path="list.img_path" v-bind:date="list.date" v-bind:time="list.time" v-bind:status="list.status"
+                 v-bind:registered_num="list.registered_num" v-bind:pending="list.pending"
+                 v-bind:started="list.started" v-bind:closed="list.closed" v-bind:details="list.details" v-bind:eventid="list.eventid"
+                 v-bind:arrow_down="list.arrow_down" v-bind:arrow_up="list.arrow_up" v-bind:detail_hide="list.detail_hide" v-on:get_detail="GetDetail(list.eventid,list, $event)"></div>
+            <p id="more" class="m-auto text-center text-white pt-3 pointer" v-on:click.self.prevent="hasMore && LoadMore()">More</p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/sources/js/eventsPageHandler.js"></script>
